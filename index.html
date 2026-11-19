@@ -31,7 +31,7 @@
       background-color: var(--bg-grey);
       color: var(--slate-dark);
       line-height: 1.5;
-      padding-bottom: 80px;
+      padding-bottom: 84px;
     }
 
     header {
@@ -45,6 +45,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 10px;
     }
 
     .brand {
@@ -53,7 +54,7 @@
     }
 
     .brand h1 {
-      font-size: 1.05rem;
+      font-size: 1.04rem;
       font-weight: 700;
       letter-spacing: 0.4px;
       color: var(--white);
@@ -65,6 +66,25 @@
       letter-spacing: 0.3px;
     }
 
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sync-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #90cdf4;
+      display: inline-block;
+    }
+
+    .sync-dot.live {
+      background: #63b3ed;
+      box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.3);
+    }
+
     .role-badge {
       background: rgba(255, 255, 255, 0.16);
       color: var(--white);
@@ -73,6 +93,7 @@
       font-size: 0.72rem;
       font-weight: 600;
       border: 1px solid rgba(255, 255, 255, 0.25);
+      white-space: nowrap;
     }
 
     .container {
@@ -133,7 +154,7 @@
 
     textarea {
       resize: vertical;
-      min-height: 82px;
+      min-height: 84px;
     }
 
     .btn {
@@ -150,6 +171,11 @@
       cursor: pointer;
       text-decoration: none;
       transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
     }
 
     .btn:active {
@@ -253,6 +279,7 @@
       background: var(--bg-grey);
       padding: 10px;
       border-radius: 8px;
+      white-space: pre-line;
     }
 
     .skills-wrap {
@@ -346,6 +373,14 @@
       border-color: #feb2b2;
     }
 
+    .list-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
     .hidden {
       display: none !important;
     }
@@ -358,29 +393,32 @@
       <h1>MUGATHI LEGACY NETWORK</h1>
       <span>Mentorship & Legacy Portal</span>
     </div>
-    <div id="sessionBadge" class="role-badge">Invite Only</div>
+    <div class="header-right">
+      <span id="syncDot" class="sync-dot" title="Cloud connection status"></span>
+      <div id="sessionBadge" class="role-badge">Invite Only</div>
+    </div>
   </header>
 
   <div class="container">
 
-    <!-- 1. ACCESS GATE (INVITE CODE OR ADMIN LOGIN) -->
+    <!-- 1. ACCESS GATE -->
     <section id="gateView">
       <div class="card">
         <div class="card-title">Welcome to Mugathi Legacy Network</div>
-        <div class="card-sub">Access is strictly by invitation link or authorized administrator login.</div>
+        <div class="card-sub">Access is strictly by verified invitation link or administrator login.</div>
 
         <div id="gateAlert" class="alert alert-error hidden"></div>
 
         <div class="form-group">
-          <label for="inviteCodeInput">Have an Invite Code?</label>
-          <input type="text" id="inviteCodeInput" placeholder="e.g. MLN-MENTEE-2026" />
+          <label for="inviteCodeInput">Invite Code</label>
+          <input type="text" id="inviteCodeInput" placeholder="Enter your invite code" autocomplete="off" />
         </div>
-        <button type="button" class="btn btn-accent" onclick="verifyInviteCode()">Enter with Invite Code</button>
+        <button type="button" id="inviteBtn" class="btn btn-accent" onclick="verifyInviteCode()">Enter with Invite Code</button>
       </div>
 
       <div class="card">
         <div class="card-title">Administrator Sign In</div>
-        <div class="card-sub">Manage invite links, mentors, and mentee profiles.</div>
+        <div class="card-sub">Generate invite links, manage directory entries, and export records.</div>
         <div class="form-group">
           <label for="adminUser">Username</label>
           <input type="text" id="adminUser" placeholder="Enter admin username" autocomplete="username" />
@@ -393,7 +431,7 @@
       </div>
     </section>
 
-    <!-- 2. MAIN APP SHELL (UNLOCKED) -->
+    <!-- 2. MAIN APP SHELL -->
     <section id="appView" class="hidden">
       <div class="nav-bar" id="navTabs">
         <button type="button" class="nav-tab active" id="tabDirectory" onclick="switchTab('directory')">Mentor Directory</button>
@@ -402,14 +440,14 @@
         <button type="button" class="nav-tab" onclick="logoutSession()">Exit</button>
       </div>
 
-      <!-- TAB A: MENTOR DIRECTORY & FILTERS -->
+      <!-- TAB A: MENTOR DIRECTORY -->
       <div id="viewDirectory">
         <div class="card">
           <div class="card-title">Find Mentees</div>
-          <div class="card-sub">Filter by field, education, county, or skills and connect directly.</div>
+          <div class="card-sub">Filter by field, education, location, or skills and connect directly.</div>
 
           <div class="form-group">
-            <input type="text" id="filterSearch" placeholder="Search name, skills, or career goals..." oninput="renderMentees()" />
+            <input type="text" id="filterSearch" placeholder="Search name, qualification, skills, or goals..." oninput="renderMentees()" />
           </div>
 
           <div class="filter-grid">
@@ -436,46 +474,50 @@
           </div>
 
           <div class="form-group" style="margin-bottom:0;">
-            <input type="text" id="filterLocation" placeholder="Filter by County / Town (e.g. Nairobi, Nyandarua, Nakuru)" oninput="renderMentees()" />
+            <input type="text" id="filterLocation" placeholder="Filter by County / Town (e.g. Nyandarua, Nairobi, Nakuru)" oninput="renderMentees()" />
           </div>
         </div>
 
-        <div id="menteeCountLabel" style="font-size:0.82rem; color:var(--slate-muted); margin-bottom:10px; font-weight:600;">Loading profiles...</div>
+        <div class="list-toolbar">
+          <div id="menteeCountLabel" style="font-size:0.82rem; color:var(--slate-muted); font-weight:600;">Loading directory...</div>
+          <button type="button" class="btn btn-outline btn-sm" onclick="clearFilters()">Reset Filters</button>
+        </div>
+
         <div id="menteeListContainer"></div>
       </div>
 
-      <!-- TAB B: MENTEE PROFILE CREATION -->
+      <!-- TAB B: MENTEE PROFILE -->
       <div id="viewProfile" class="hidden">
         <div class="card">
           <div class="card-title">Create / Update Mentee Profile</div>
-          <div class="card-sub">Share your background and qualifications so mentors can guide you.</div>
+          <div class="card-sub">Complete your profile so mentors can review your background and reach out.</div>
 
           <div id="profileAlert" class="alert hidden"></div>
 
           <form id="menteeForm" onsubmit="saveMenteeProfile(event)">
             <div class="form-group">
-              <label>Full Name *</label>
+              <label for="mName">Full Name *</label>
               <input type="text" id="mName" required placeholder="e.g. Jane Wanjiku Kamau" />
             </div>
 
             <div class="filter-grid">
               <div class="form-group">
-                <label>Phone / WhatsApp *</label>
+                <label for="mPhone">Phone / WhatsApp *</label>
                 <input type="tel" id="mPhone" required placeholder="e.g. 0712345678" />
               </div>
               <div class="form-group">
-                <label>Email Address *</label>
-                <input type="email" id="mEmail" required placeholder="jane@example.com" />
+                <label for="mEmail">Email Address *</label>
+                <input type="email" id="mEmail" required placeholder="name@example.com" />
               </div>
             </div>
 
             <div class="filter-grid">
               <div class="form-group">
-                <label>County / Location *</label>
+                <label for="mLocation">County / Town *</label>
                 <input type="text" id="mLocation" required placeholder="e.g. Ol Kalou, Nyandarua" />
               </div>
               <div class="form-group">
-                <label>Age Bracket</label>
+                <label for="mAge">Age Bracket</label>
                 <select id="mAge">
                   <option value="18 - 22">18 - 22</option>
                   <option value="23 - 27" selected>23 - 27</option>
@@ -487,7 +529,7 @@
 
             <div class="filter-grid">
               <div class="form-group">
-                <label>Primary Career Field *</label>
+                <label for="mField">Primary Career Field *</label>
                 <select id="mField" required>
                   <option value="Technology & Software">Technology & Software</option>
                   <option value="Business & Entrepreneurship">Business & Entrepreneurship</option>
@@ -500,7 +542,7 @@
                 </select>
               </div>
               <div class="form-group">
-                <label>Highest Education *</label>
+                <label for="mEducation">Highest Education *</label>
                 <select id="mEducation" required>
                   <option value="High School / KCSE">High School / KCSE</option>
                   <option value="Certificate / Artisan">Certificate / Artisan</option>
@@ -512,22 +554,22 @@
             </div>
 
             <div class="form-group">
-              <label>Institution & Course / Qualification *</label>
-              <input type="text" id="mQualification" required placeholder="e.g. BSc. Computer Science, Kenyatta University" />
+              <label for="mQualification">Institution & Course / Qualification *</label>
+              <input type="text" id="mQualification" required placeholder="e.g. BSc. Computer Science" />
             </div>
 
             <div class="form-group">
-              <label>Key Skills (comma separated)</label>
-              <input type="text" id="mSkills" placeholder="e.g. Python, Accounting, Agribusiness, Public Speaking" />
+              <label for="mSkills">Key Skills (comma separated)</label>
+              <input type="text" id="mSkills" placeholder="e.g. Python, Bookkeeping, Project Management" />
             </div>
 
             <div class="form-group">
-              <label>Bio & What Mentorship Support You Need *</label>
-              <textarea id="mBio" required placeholder="Briefly describe your journey, career goals, and what kind of mentor guidance you are looking for..."></textarea>
+              <label for="mBio">Bio & Mentorship Goals *</label>
+              <textarea id="mBio" required placeholder="Share your background, current work/studies, and the mentorship guidance you seek..."></textarea>
             </div>
 
             <div class="form-group">
-              <label>Optional CV / Certificate Upload (PDF or Image, max 450KB)</label>
+              <label for="mDocFile">Optional CV / Certificate (PDF, PNG, JPG — max 450KB)</label>
               <input type="file" id="mDocFile" accept=".pdf,.png,.jpg,.jpeg" />
             </div>
 
@@ -536,145 +578,90 @@
         </div>
       </div>
 
-      <!-- TAB C: ADMIN PANEL & INVITE LINK GENERATOR -->
+      <!-- TAB C: ADMIN PANEL -->
       <div id="viewAdmin" class="hidden">
         <div class="card">
           <div class="card-title">Generate Invite Link</div>
-          <div class="card-sub">Create a shareable link for new Mentors or Mentees.</div>
+          <div class="card-sub">Issue unique invite links for Mentors or Mentees.</div>
 
           <div class="filter-grid">
             <div class="form-group">
-              <label>Invite Role</label>
+              <label for="newInviteRole">Role</label>
               <select id="newInviteRole">
                 <option value="MENTEE">Mentee Invite</option>
                 <option value="MENTOR">Mentor Invite</option>
               </select>
             </div>
             <div class="form-group">
-              <label>Label / Recipient Name</label>
-              <input type="text" id="newInviteLabel" placeholder="e.g. Cohort 1 / Dr. Mwangi" />
+              <label for="newInviteType">Usage Limit</label>
+              <select id="newInviteType">
+                <option value="MULTI">Reusable Link</option>
+                <option value="SINGLE">Single-Use Link</option>
+              </select>
             </div>
           </div>
 
-          <button type="button" class="btn btn-accent" onclick="createInviteLink()">+ Generate Invite Link</button>
+          <div class="form-group">
+            <label for="newInviteLabel">Recipient / Cohort Note</label>
+            <input type="text" id="newInviteLabel" placeholder="e.g. Cohort 1 Mentee / Dr. Kamau" />
+          </div>
+
+          <button type="button" id="genInviteBtn" class="btn btn-accent" onclick="createInviteLink()">+ Generate Invite Link</button>
         </div>
 
         <div class="card">
           <div class="card-title">Active Invite Links</div>
-          <div class="card-sub">Tap Share on WhatsApp or Copy Link to invite users.</div>
+          <div class="card-sub">Share via WhatsApp, copy the link, or revoke access anytime.</div>
           <div id="inviteListContainer"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Directory Backup</div>
+          <div class="card-sub">Download a CSV spreadsheet of all current mentee profiles.</div>
+          <button type="button" class="btn btn-outline" onclick="exportMenteesCsv()">Export Mentees (CSV)</button>
         </div>
       </div>
     </section>
 
   </div>
 
-  <!-- CORE UI & AUTH SCRIPT (ALWAYS AVAILABLE) -->
+  <!-- CORE APPLICATION LOGIC -->
   <script>
     const ADMIN_CREDS = {
       username: "admin",
       password: "Ufunguo321"
     };
 
-    const SESSION_KEY = "mln_session_v1";
-    const LOCAL_INVITES_KEY = "mln_invites_cache_v1";
-    const LOCAL_MENTEES_KEY = "mln_mentees_cache_v1";
-
-    const DEFAULT_INVITES = [
-      { code: "MLN-MENTOR-2026", role: "MENTOR", label: "General Mentor Pass", active: true, createdAt: 1 },
-      { code: "MLN-MENTEE-2026", role: "MENTEE", label: "General Mentee Pass", active: true, createdAt: 2 }
-    ];
-
-    const DEFAULT_MENTEES = [
-      {
-        id: "m_101",
-        name: "Brian Kamau Njoroge",
-        phone: "254712345678",
-        email: "brian.njoroge@example.com",
-        location: "Ol Kalou, Nyandarua",
-        age: "23 - 27",
-        field: "Technology & Software",
-        education: "Undergraduate Degree",
-        qualification: "BSc. Information Technology - JKUAT",
-        skills: ["Web Development", "Python", "POS Systems", "Digital Marketing"],
-        bio: "Aspiring software engineer building practical tools for local SMEs. Seeking guidance on scaling SaaS products and enterprise client acquisition.",
-        docName: "",
-        docData: "",
-        createdAt: 101
-      },
-      {
-        id: "m_102",
-        name: "Faith Muthoni Waweru",
-        phone: "254722987654",
-        email: "faith.waweru@example.com",
-        location: "Nairobi",
-        age: "23 - 27",
-        field: "Finance & Accounting",
-        education: "Undergraduate Degree",
-        qualification: "BCom (Finance) & CPA Part II - University of Nairobi",
-        skills: ["Financial Modeling", "Tax Compliance", "Auditing", "Excel"],
-        bio: "Passionate about corporate finance and SME bookkeeping. Looking for a senior finance mentor to guide my CPA transition and career growth.",
-        docName: "",
-        docData: "",
-        createdAt: 102
-      },
-      {
-        id: "m_103",
-        name: "David Kiprop Chesire",
-        phone: "254733456123",
-        email: "david.chesire@example.com",
-        location: "Nakuru",
-        age: "18 - 22",
-        field: "Agriculture & Agribusiness",
-        education: "Diploma",
-        qualification: "Diploma in Agribusiness Management - Egerton University",
-        skills: ["Dairy Value Chain", "Horticulture", "Supply Chain"],
-        bio: "Running a small potato and dairy aggregation initiative in Rift Valley. Seeking mentorship on agribusiness financing and export standards.",
-        docName: "",
-        docData: "",
-        createdAt: 103
-      }
-    ];
+    const SESSION_KEY = "mln_prod_session_v1";
+    const INVITES_CACHE_KEY = "mln_prod_invites_v1";
+    const MENTEES_CACHE_KEY = "mln_prod_mentees_v1";
 
     function getCachedInvites() {
-      const saved = JSON.parse(localStorage.getItem(LOCAL_INVITES_KEY) || "null");
-      if (saved && Array.isArray(saved) && saved.length > 0) return saved;
-      return DEFAULT_INVITES;
+      return JSON.parse(localStorage.getItem(INVITES_CACHE_KEY) || "[]");
     }
 
     function setCachedInvites(list) {
-      localStorage.setItem(LOCAL_INVITES_KEY, JSON.stringify(list));
+      localStorage.setItem(INVITES_CACHE_KEY, JSON.stringify(list));
     }
 
     function getCachedMentees() {
-      const saved = JSON.parse(localStorage.getItem(LOCAL_MENTEES_KEY) || "null");
-      if (saved && Array.isArray(saved) && saved.length > 0) return saved;
-      return DEFAULT_MENTEES;
+      return JSON.parse(localStorage.getItem(MENTEES_CACHE_KEY) || "[]");
     }
 
     function setCachedMentees(list) {
-      localStorage.setItem(LOCAL_MENTEES_KEY, JSON.stringify(list));
+      localStorage.setItem(MENTEES_CACHE_KEY, JSON.stringify(list));
     }
 
-    function inferRoleFromCode(code) {
-      const upper = (code || "").toUpperCase();
-      if (upper.includes("MENTOR")) return "MENTOR";
-      if (upper.includes("MENTEE")) return "MENTEE";
-      return null;
-    }
-
-    function resolveInvite(code) {
-      const clean = (code || "").trim().toUpperCase();
-      if (!clean) return null;
-      const found = getCachedInvites().find(i => i.code.toUpperCase() === clean && i.active !== false);
-      if (found) return found;
-
-      // Allow MLN-MENTOR-... or MLN-MENTEE-... codes even if opened on another device before cache sync
-      const inferredRole = inferRoleFromCode(clean);
-      if (clean.startsWith("MLN-") && inferredRole) {
-        return { code: clean, role: inferredRole, label: "Invited " + inferredRole, active: true };
+    function setSyncStatus(isLive) {
+      const dot = document.getElementById("syncDot");
+      if (!dot) return;
+      if (isLive) {
+        dot.classList.add("live");
+        dot.title = "Connected to Firebase Cloud";
+      } else {
+        dot.classList.remove("live");
+        dot.title = "Offline / Local cache";
       }
-      return null;
     }
 
     function showGateError(msg) {
@@ -696,18 +683,24 @@
         setSession(session);
         unlockApp(session);
       } else {
-        showGateError("Incorrect username or password. Use admin / Ufunguo321.");
+        showGateError("Invalid administrator credentials.");
       }
     }
 
-    function verifyInviteCode() {
+    async function verifyInviteCode() {
       const input = document.getElementById("inviteCodeInput").value.trim().toUpperCase();
-      const found = resolveInvite(input);
-      if (!found) {
-        showGateError("Invalid invite code. Check the code or sign in as Admin.");
+      if (!input) {
+        showGateError("Please enter an invite code.");
         return;
       }
-      const session = { role: found.role, code: found.code, label: found.label };
+
+      const invite = await window.lookupAndConsumeInvite(input);
+      if (!invite) {
+        showGateError("Invite code is invalid, expired, or has already been used.");
+        return;
+      }
+
+      const session = { role: invite.role, code: invite.code, label: invite.label };
       setSession(session);
       unlockApp(session);
     }
@@ -763,8 +756,16 @@
       }
     }
 
-    function formatKenyanPhone(raw) {
-      let digits = raw.replace(/\D/g, "");
+    function clearFilters() {
+      document.getElementById("filterSearch").value = "";
+      document.getElementById("filterField").value = "";
+      document.getElementById("filterEducation").value = "";
+      document.getElementById("filterLocation").value = "";
+      renderMentees();
+    }
+
+    function formatPhoneForDialer(raw) {
+      let digits = (raw || "").replace(/\D/g, "");
       if (digits.startsWith("0") && digits.length === 10) {
         return "254" + digits.substring(1);
       }
@@ -805,11 +806,12 @@
       if (!container) return;
 
       if (mentees.length === 0) {
-        container.innerHTML = `<div class="card"><div class="card-sub" style="margin:0;">No mentees match your current filters.</div></div>`;
+        container.innerHTML = `<div class="card"><div class="card-sub" style="margin:0;">No mentee profiles found matching your criteria.</div></div>`;
         return;
       }
 
       container.innerHTML = mentees.map(m => {
+        const cleanPhone = formatPhoneForDialer(m.phone);
         const waMsg = encodeURIComponent(
           `Hello ${m.name}, I found your profile on the Mugathi Legacy Network and would like to connect for mentorship.`
         );
@@ -821,7 +823,7 @@
 
         const docHtml = m.docName
           ? `<div style="margin-bottom:10px; font-size:0.8rem;">
-              <strong>Attachment:</strong> ${
+              <strong>Document:</strong> ${
                 m.docData
                   ? `<a href="${m.docData}" download="${escapeHtml(m.docName)}" style="color:var(--blue-accent); font-weight:600;">Download ${escapeHtml(m.docName)}</a>`
                   : `<span style="color:var(--slate-muted);">${escapeHtml(m.docName)}</span>`
@@ -831,7 +833,7 @@
 
         const adminDeleteBtn =
           session.role === "ADMIN"
-            ? `<button type="button" class="btn btn-danger btn-sm" style="margin-top:10px; width:100%;" onclick="deleteMentee('${m.id}')">Remove Profile (Admin)</button>`
+            ? `<button type="button" class="btn btn-danger btn-sm" style="margin-top:10px; width:100%;" onclick="deleteMentee('${m.id}')">Delete Profile (Admin)</button>`
             : "";
 
         return `
@@ -854,8 +856,8 @@
             ${docHtml}
 
             <div class="contact-grid">
-              <a class="contact-btn btn-wa" href="https://wa.me/${m.phone}?text=${waMsg}" target="_blank" rel="noopener">WhatsApp</a>
-              <a class="contact-btn btn-call" href="tel:+${m.phone}">Call</a>
+              <a class="contact-btn btn-wa" href="https://wa.me/${cleanPhone}?text=${waMsg}" target="_blank" rel="noopener">WhatsApp</a>
+              <a class="contact-btn btn-call" href="tel:+${cleanPhone}">Call</a>
               <a class="contact-btn btn-mail" href="mailto:${escapeHtml(m.email)}?subject=${mailSubj}">Email</a>
             </div>
             ${adminDeleteBtn}
@@ -870,16 +872,22 @@
       if (!container) return;
 
       const activeList = getCachedInvites().filter(i => i.active !== false);
+      if (activeList.length === 0) {
+        container.innerHTML = `<div class="card-sub" style="margin:0;">No active invite links. Generate one above.</div>`;
+        return;
+      }
+
       container.innerHTML = activeList.map(inv => {
         const fullLink = `${baseUrl}?invite=${inv.code}`;
+        const usageTag = inv.singleUse ? "Single-Use" : "Reusable";
         const shareText = encodeURIComponent(
-          `You are invited to join the *Mugathi Legacy Network* as a ${inv.role}.\nTap here to access: ${fullLink}`
+          `You are invited to join the *Mugathi Legacy Network* as a ${inv.role}.\nTap here to open: ${fullLink}`
         );
 
         return `
           <div class="invite-item">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-              <strong>${escapeHtml(inv.label)} (${inv.role})</strong>
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
+              <strong>${escapeHtml(inv.label)} (${inv.role} • ${usageTag})</strong>
               <span class="mentee-tag">${inv.code}</span>
             </div>
             <div class="invite-url">${fullLink}</div>
@@ -893,10 +901,47 @@
       }).join("");
     }
 
+    function exportMenteesCsv() {
+      const mentees = getCachedMentees();
+      if (!mentees.length) {
+        alert("No mentee profiles to export.");
+        return;
+      }
+
+      const headers = ["Name", "Phone", "Email", "Location", "Age", "Field", "Education", "Qualification", "Skills", "Bio", "Document"];
+      const rows = mentees.map(m => [
+        m.name,
+        m.phone,
+        m.email,
+        m.location,
+        m.age,
+        m.field,
+        m.education,
+        m.qualification,
+        (m.skills || []).join("; "),
+        (m.bio || "").replace(/\r?\n/g, " "),
+        m.docName || ""
+      ]);
+
+      const csvContent = [headers, ...rows]
+        .map(row => row.map(val => `"${String(val || "").replace(/"/g, '""')}"`).join(","))
+        .join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `mugathi-legacy-mentees-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
     function copyText(text) {
-      navigator.clipboard.writeText(text).then(() => {
-        alert("Invite link copied to clipboard!");
-      });
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => alert("Invite link copied."));
+      } else {
+        prompt("Copy this invite link:", text);
+      }
     }
 
     function escapeHtml(str) {
@@ -908,32 +953,36 @@
         .replace(/"/g, "&quot;");
     }
 
-    // Check URL invite or active session immediately on load
-    (function bootImmediately() {
-      const params = new URLSearchParams(window.location.search);
-      const urlInvite = params.get("invite");
-
-      if (urlInvite) {
-        const found = resolveInvite(urlInvite);
-        if (found) {
-          const session = { role: found.role, code: found.code, label: found.label };
-          setSession(session);
-          window.history.replaceState({}, document.title, window.location.pathname);
-          unlockApp(session);
-          return;
-        } else {
-          showGateError("Invalid invite code in URL.");
-        }
-      }
-
+    (async function boot() {
       const savedSession = JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
       if (savedSession && savedSession.role) {
         unlockApp(savedSession);
       }
+
+      const params = new URLSearchParams(window.location.search);
+      const urlInvite = params.get("invite");
+      if (urlInvite) {
+        // Wait briefly for Firebase module if still loading
+        let attempts = 0;
+        while (!window.lookupAndConsumeInvite && attempts < 20) {
+          await new Promise(r => setTimeout(r, 100));
+          attempts++;
+        }
+        const found = window.lookupAndConsumeInvite ? await window.lookupAndConsumeInvite(urlInvite) : null;
+        window.history.replaceState({}, document.title, window.location.pathname);
+
+        if (found) {
+          const session = { role: found.role, code: found.code, label: found.label };
+          setSession(session);
+          unlockApp(session);
+        } else if (!savedSession) {
+          showGateError("This invite link is invalid, expired, or has already been used.");
+        }
+      }
     })();
   </script>
 
-  <!-- OPTIONAL FIREBASE CLOUD SYNC (NON-BLOCKING) -->
+  <!-- FIREBASE FIRESTORE PRODUCTION SYNC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import {
@@ -941,8 +990,9 @@
       collection,
       doc,
       setDoc,
+      updateDoc,
       deleteDoc,
-      getDocs,
+      getDoc,
       onSnapshot
     } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -958,48 +1008,62 @@
 
     let db = null;
 
-    async function initCloudSync() {
-      try {
-        const app = initializeApp(firebaseConfig);
-        db = getFirestore(app);
+    try {
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+      setSyncStatus(true);
 
-        const inviteSnap = await getDocs(collection(db, "mln_invites"));
-        if (inviteSnap.empty) {
-          for (const inv of DEFAULT_INVITES) {
-            await setDoc(doc(db, "mln_invites", inv.code), inv);
-          }
-        }
+      onSnapshot(collection(db, "mln_mentees"), (snapshot) => {
+        setSyncStatus(true);
+        const cloudList = snapshot.docs
+          .map(d => d.data())
+          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        setCachedMentees(cloudList);
+        renderMentees();
+      }, () => setSyncStatus(false));
 
-        const menteeSnap = await getDocs(collection(db, "mln_mentees"));
-        if (menteeSnap.empty) {
-          for (const m of DEFAULT_MENTEES) {
-            await setDoc(doc(db, "mln_mentees", m.id), m);
-          }
-        }
-
-        onSnapshot(collection(db, "mln_mentees"), (snapshot) => {
-          const cloudList = snapshot.docs
-            .map(d => d.data())
-            .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-          if (cloudList.length > 0) {
-            setCachedMentees(cloudList);
-            renderMentees();
-          }
-        });
-
-        onSnapshot(collection(db, "mln_invites"), (snapshot) => {
-          const cloudInvites = snapshot.docs
-            .map(d => d.data())
-            .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-          if (cloudInvites.length > 0) {
-            setCachedInvites(cloudInvites);
-            renderInvites();
-          }
-        });
-      } catch (err) {
-        console.warn("Firestore offline/unavailable, using local cache:", err);
-      }
+      onSnapshot(collection(db, "mln_invites"), (snapshot) => {
+        setSyncStatus(true);
+        const cloudInvites = snapshot.docs
+          .map(d => d.data())
+          .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        setCachedInvites(cloudInvites);
+        renderInvites();
+      }, () => setSyncStatus(false));
+    } catch (err) {
+      console.error("Firebase init failed:", err);
+      setSyncStatus(false);
     }
+
+    window.lookupAndConsumeInvite = async function(rawCode) {
+      const clean = (rawCode || "").trim().toUpperCase();
+      if (!clean) return null;
+
+      if (db) {
+        try {
+          const snap = await getDoc(doc(db, "mln_invites", clean));
+          if (snap.exists()) {
+            const data = snap.data();
+            if (data.active === false) return null;
+            if (data.singleUse) {
+              await updateDoc(doc(db, "mln_invites", clean), { active: false, usedAt: Date.now() });
+            }
+            return data;
+          }
+        } catch (err) {
+          console.warn("Invite lookup fallback to cache:", err);
+        }
+      }
+
+      const cached = getCachedInvites().find(i => i.code.toUpperCase() === clean && i.active !== false);
+      if (cached && cached.singleUse) {
+        const updated = getCachedInvites().map(i =>
+          i.code.toUpperCase() === clean ? { ...i, active: false } : i
+        );
+        setCachedInvites(updated);
+      }
+      return cached || null;
+    };
 
     window.saveMenteeProfile = async function(e) {
       e.preventDefault();
@@ -1008,20 +1072,23 @@
       const file = fileInput.files[0];
 
       if (file && file.size > 450 * 1024) {
-        alert("Please upload a smaller document (under 450KB).");
+        alert("Please select a file smaller than 450KB.");
         return;
       }
 
       btn.disabled = true;
-      btn.textContent = "Saving...";
+      btn.textContent = "Publishing...";
 
       const processSave = async (docName, docData) => {
-        const id = "m_" + Date.now();
-        const newMentee = {
+        const emailVal = document.getElementById("mEmail").value.trim().toLowerCase();
+        const existing = getCachedMentees().find(m => (m.email || "").toLowerCase() === emailVal);
+        const id = existing ? existing.id : "m_" + Date.now();
+
+        const profileObj = {
           id,
           name: document.getElementById("mName").value.trim(),
-          phone: formatKenyanPhone(document.getElementById("mPhone").value.trim()),
-          email: document.getElementById("mEmail").value.trim(),
+          phone: formatPhoneForDialer(document.getElementById("mPhone").value.trim()),
+          email: emailVal,
           location: document.getElementById("mLocation").value.trim(),
           age: document.getElementById("mAge").value,
           field: document.getElementById("mField").value,
@@ -1032,25 +1099,29 @@
             .map(s => s.trim())
             .filter(Boolean),
           bio: document.getElementById("mBio").value.trim(),
-          docName: docName || "",
-          docData: docData || "",
-          createdAt: Date.now()
+          docName: docName || (existing ? existing.docName : ""),
+          docData: docData || (existing ? existing.docData : ""),
+          createdAt: existing ? existing.createdAt : Date.now(),
+          updatedAt: Date.now()
         };
 
-        const updated = [newMentee, ...getCachedMentees()];
-        setCachedMentees(updated);
+        const filtered = getCachedMentees().filter(m => m.id !== id);
+        setCachedMentees([profileObj, ...filtered]);
         renderMentees();
 
         if (db) {
           try {
-            await setDoc(doc(db, "mln_mentees", id), newMentee);
+            await setDoc(doc(db, "mln_mentees", id), profileObj);
           } catch (err) {
-            console.warn("Cloud write queued locally:", err);
+            console.error("Cloud save failed:", err);
+            alert("Saved locally, but cloud sync encountered an issue. Check connection.");
           }
         }
 
         const alertBox = document.getElementById("profileAlert");
-        alertBox.textContent = "Profile saved! Mentors can now view your profile.";
+        alertBox.textContent = existing
+          ? "Your existing profile has been updated!"
+          : "Your profile has been published to the directory!";
         alertBox.classList.remove("hidden");
         document.getElementById("menteeForm").reset();
         btn.disabled = false;
@@ -1074,54 +1145,48 @@
     };
 
     window.deleteMentee = async function(id) {
-      if (!confirm("Remove this mentee profile?")) return;
+      if (!confirm("Permanently delete this mentee profile?")) return;
       const updated = getCachedMentees().filter(m => m.id !== id);
       setCachedMentees(updated);
       renderMentees();
       if (db) {
-        try {
-          await deleteDoc(doc(db, "mln_mentees", id));
-        } catch (err) {
-          console.warn(err);
-        }
+        await deleteDoc(doc(db, "mln_mentees", id));
       }
     };
 
     window.createInviteLink = async function() {
       const role = document.getElementById("newInviteRole").value;
-      const label = document.getElementById("newInviteLabel").value.trim() || "Invited Member";
-      const randomNum = Math.floor(1000 + Math.random() * 9000);
-      const code = `MLN-${role}-${randomNum}`;
-      const inviteObj = { code, role, label, active: true, createdAt: Date.now() };
+      const singleUse = document.getElementById("newInviteType").value === "SINGLE";
+      const label = document.getElementById("newInviteLabel").value.trim() || `${role} Invite`;
+      const code = `MLN-${role}-${Math.floor(100000 + Math.random() * 900000)}`;
 
-      const updated = [inviteObj, ...getCachedInvites()];
-      setCachedInvites(updated);
+      const inviteObj = {
+        code,
+        role,
+        label,
+        singleUse,
+        active: true,
+        createdAt: Date.now()
+      };
+
+      setCachedInvites([inviteObj, ...getCachedInvites()]);
       renderInvites();
       document.getElementById("newInviteLabel").value = "";
 
       if (db) {
-        try {
-          await setDoc(doc(db, "mln_invites", code), inviteObj);
-        } catch (err) {
-          console.warn(err);
-        }
+        await setDoc(doc(db, "mln_invites", code), inviteObj);
       }
     };
 
     window.revokeInvite = async function(code) {
+      if (!confirm("Revoke this invite link?")) return;
       const updated = getCachedInvites().filter(i => i.code !== code);
       setCachedInvites(updated);
       renderInvites();
       if (db) {
-        try {
-          await deleteDoc(doc(db, "mln_invites", code));
-        } catch (err) {
-          console.warn(err);
-        }
+        await deleteDoc(doc(db, "mln_invites", code));
       }
     };
-
-    initCloudSync();
   </script>
 </body>
 </html>
