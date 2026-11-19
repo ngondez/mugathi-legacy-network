@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Mugathi Legacy Network | Mentorship Portal</title>
+  <style>
+    :root {
+      --navy-dark: #0f2342;
+      --navy-main: #1a365d;
+      --blue-accent: #2b6cb0;
+      --blue-light: #ebf4ff;
+      --slate-dark: #2d3748;
+      --slate-muted: #5a677d;
+      --border-grey: #d9e2ec;
+      --bg-grey: #f4f7fa;
+      --white: #ffffff;
+      --success-blue: #1d4ed8;
+      --danger-red: #c53030;
+      --radius: 12px;
+      --shadow: 0 4px 14px rgba(15, 35, 66, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-grey);
+      color: var(--slate-dark);
+      line-height: 1.5;
+      padding-bottom: 80px;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--navy-dark), var(--navy-main));
+      color: var(--white);
+      padding: 16px 18px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(15, 35, 66, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand h1 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      color: var(--white);
+    }
+
+    .brand span {
+      font-size: 0.72rem;
+      color: #bee3f8;
+      letter-spacing: 0.3px;
+    }
+
+    .role-badge {
+      background: rgba(255, 255, 255, 0.16);
+      color: var(--white);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    /* Container */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-grey);
+    }
+
+    .card-title {
+      color: var(--navy-main);
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .card-sub {
+      color: var(--slate-muted);
+      font-size: 0.85rem;
+      margin-bottom: 14px;
+    }
+
+    /* Form Controls */
+    .form-group {
+      margin-bottom: 13px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--navy-main);
+      margin-bottom: 5px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 11px 12px;
+      border: 1.5px solid var(--border-grey);
+      border-radius: 8px;
+      font-size: 0.92rem;
+      color: var(--slate-dark);
+      background: var(--white);
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--blue-accent);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 82px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background: var(--navy-main);
+      color: var(--white);
+    }
+
+    .btn-accent {
+      background: var(--blue-accent);
+      color: var(--white);
+    }
+
+    .btn-outline {
+      background: var(--blue-light);
+      color: var(--navy-main);
+      border: 1px solid #cbd5e0;
+    }
+
+    .btn-sm {
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      width: auto;
+    }
+
+    .btn-danger {
+      background: #fff5f5;
+      color: var(--danger-red);
+      border: 1px solid #feb2b2;
+    }
+
+    /* Navigation Tabs */
+    .nav-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .nav-tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px 8px;
+      background: var(--white);
+      color: var(--slate-muted);
+      border: 1px solid var(--border-grey);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .nav-tab.active {
+      background: var(--navy-main);
+      color: var(--white);
+      border-color: var(--navy-main);
+    }
+
+    /* Mentee Directory Cards */
+    .mentee-card {
+      border-left: 4px solid var(--blue-accent);
+    }
+
+    .mentee-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 8px;
+    }
+
+    .mentee-name {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--navy-dark);
+    }
+
+    .mentee-tag {
+      background: var(--blue-light);
+      color: var(--blue-accent);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .mentee-meta {
+      font-size: 0.82rem;
+      color: var(--slate-muted);
+      margin-bottom: 8px;
+    }
+
+    .mentee-bio {
+      font-size: 0.88rem;
+      color: var(--slate-dark);
+      margin-bottom: 10px;
+      background: var(--bg-grey);
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .skills-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .skill-pill {
+      background: #edf2f7;
+      color: var(--navy-main);
+      font-size: 0.74rem;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 12px;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .contact-btn {
+      padding: 9px 6px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      display: block;
+    }
+
+    .btn-wa {
+      background: #e6fffa;
+      color: #234e52;
+      border: 1px solid #b2f5ea;
+    }
+
+    .btn-call {
+      background: var(--blue-light);
+      color: var(--navy-main);
+      border: 1px solid #bee3f8;
+    }
+
+    .btn-mail {
+      background: #edf2f7;
+      color: var(--slate-dark);
+      border: 1px solid #cbd5e0;
+    }
+
+    /* Filter Grid */
+    .filter-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    /* Invite Box */
+    .invite-item {
+      background: var(--bg-grey);
+      border: 1px solid var(--border-grey);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 0.82rem;
+    }
+
+    .invite-url {
+      word-break: break-all;
+      color: var(--blue-accent);
+      font-weight: 600;
+      margin: 4px 0 8px 0;
+      font-size: 0.78rem;
+    }
+
+    .alert {
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      margin-bottom: 12px;
+      background: var(--blue-light);
+      color: var(--navy-main);
+      border: 1px solid #bee3f8;
+    }
+
+    .alert-error {
+      background: #fff5f5;
+      color: var(--danger-red);
+      border-color: #feb2b2;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <h1>MUGATHI LEGACY NETWORK</h1>
+      <span>Mentorship & Legacy Portal</span>
+    </div>
+    <div id="sessionBadge" class="role-badge">Invite Only</div>
+  </header>
+
+  <div class="container">
+
+    <!-- 1. ACCESS GATE (INVITE CODE OR ADMIN LOGIN) -->
+    <section id="gateView">
+      <div class="card">
+        <div class="card-title">Welcome to Mugathi Legacy Network</div>
+        <div class="card-sub">Access is strictly by invitation link or authorized administrator login.</div>
+
+        <div id="gateAlert" class="alert alert-error hidden"></div>
+
+        <div class="form-group">
+          <label for="inviteCodeInput">Have an Invite Code?</label>
+          <input type="text" id="inviteCodeInput" placeholder="e.g. MLN-MENTEE-8421" />
+        </div>
+        <button class="btn btn-accent" onclick="verifyInviteCode()">Enter with Invite Code</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Administrator Sign In</div>
+        <div class="card-sub">Manage invite links, mentors, and mentee profiles.</div>
+        <div class="form-group">
+          <label for="adminUser">Username</label>
+          <input type="text" id="adminUser" placeholder="Enter admin username" autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label for="adminPass">Password</label>
+          <input type="password" id="adminPass" placeholder="Enter password" autocomplete="current-password" />
+        </div>
+        <button class="btn btn-primary" onclick="loginAdmin()">Sign In as Admin</button>
+      </div>
+    </section>
+
+    <!-- 2. MAIN APP SHELL (UNLOCKED) -->
+    <section id="appView" class="hidden">
+      <div class="nav-bar" id="navTabs">
+        <button class="nav-tab active" id="tabDirectory" onclick="switchTab('directory')">Mentor Directory</button>
+        <button class="nav-tab" id="tabProfile" onclick="switchTab('profile')">Mentee Profile</button>
+        <button class="nav-tab hidden" id="tabAdmin" onclick="switchTab('admin')">Admin & Invites</button>
+        <button class="nav-tab" onclick="logoutSession()">Exit</button>
+      </div>
+
+      <!-- TAB A: MENTOR DIRECTORY & FILTERS -->
+      <div id="viewDirectory">
+        <div class="card">
+          <div class="card-title">Find Mentees</div>
+          <div class="card-sub">Filter by field, education, county, or skills and connect directly.</div>
+
+          <div class="form-group">
+            <input type="text" id="filterSearch" placeholder="Search name, skills, or career goals..." oninput="renderMentees()" />
+          </div>
+
+          <div class="filter-grid">
+            <select id="filterField" onchange="renderMentees()">
+              <option value="">All Career Fields</option>
+              <option value="Technology & Software">Technology & Software</option>
+              <option value="Business & Entrepreneurship">Business & Entrepreneurship</option>
+              <option value="Healthcare & Medicine">Healthcare & Medicine</option>
+              <option value="Engineering & Construction">Engineering & Construction</option>
+              <option value="Finance & Accounting">Finance & Accounting</option>
+              <option value="Agriculture & Agribusiness">Agriculture & Agribusiness</option>
+              <option value="Law & Governance">Law & Governance</option>
+              <option value="Other">Other</option>
+            </select>
+
+            <select id="filterEducation" onchange="renderMentees()">
+              <option value="">All Education Levels</option>
+              <option value="High School / KCSE">High School / KCSE</option>
+              <option value="Certificate / Artisan">Certificate / Artisan</option>
+              <option value="Diploma">Diploma</option>
+              <option value="Undergraduate Degree">Undergraduate Degree</option>
+              <option value="Postgraduate / Masters">Postgraduate / Masters</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="margin-bottom:0;">
+            <input type="text" id="filterLocation" placeholder="Filter by County / Town (e.g. Nairobi, Nyandarua, Nakuru)" oninput="renderMentees()" />
+          </div>
+        </div>
+
+        <div id="menteeCountLabel" style="font-size:0.82rem; color:var(--slate-muted); margin-bottom:10px; font-weight:600;"></div>
+        <div id="menteeListContainer"></div>
+      </div>
+
+      <!-- TAB B: MENTEE PROFILE CREATION -->
+      <div id="viewProfile" class="hidden">
+        <div class="card">
+          <div class="card-title">Create / Update Mentee Profile</div>
+          <div class="card-sub">Share your background and qualifications so mentors can guide you.</div>
+
+          <div id="profileAlert" class="alert hidden"></div>
+
+          <form id="menteeForm" onsubmit="saveMenteeProfile(event)">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" id="mName" required placeholder="e.g. Jane Wanjiku Kamau" />
+            </div>
+
+            <div class="filter-grid">
+              <div class="form-group">
+                <label>Phone / WhatsApp *</label>
+                <input type="tel" id="mPhone" required placeholder="e.g. 0712345678" />
+              </div>
+              <div class="form-group">
+                <label>Email Address *</label>
+                <input type="email" id="mEmail" required placeholder="jane@example.com" />
+              </div>
+            </div>
+
+            <div class="filter-grid">
+              <div class="form-group">
+                <label>County / Location *</label>
+                <input type="text" id="mLocation" required placeholder="e.g. Ol Kalou, Nyandarua" />
+              </div>
+              <div class="form-group">
+                <label>Age Bracket</label>
+                <select id="mAge">
+                  <option value="18 - 22">18 - 22</option>
+                  <option value="23 - 27" selected>23 - 27</option>
+                  <option value="28 - 35">28 - 35</option>
+                  <option value="36+">36+</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="filter-grid">
+              <div class="form-group">
+                <label>Primary Career Field *</label>
+                <select id="mField" required>
+                  <option value="Technology & Software">Technology & Software</option>
+                  <option value="Business & Entrepreneurship">Business & Entrepreneurship</option>
+                  <option value="Healthcare & Medicine">Healthcare & Medicine</option>
+                  <option value="Engineering & Construction">Engineering & Construction</option>
+                  <option value="Finance & Accounting">Finance & Accounting</option>
+                  <option value="Agriculture & Agribusiness">Agriculture & Agribusiness</option>
+                  <option value="Law & Governance">Law & Governance</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Highest Education *</label>
+                <select id="mEducation" required>
+                  <option value="High School / KCSE">High School / KCSE</option>
+                  <option value="Certificate / Artisan">Certificate / Artisan</option>
+                  <option value="Diploma">Diploma</option>
+                  <option value="Undergraduate Degree" selected>Undergraduate Degree</option>
+                  <option value="Postgraduate / Masters">Postgraduate / Masters</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Institution & Course / Qualification *</label>
+              <input type="text" id="mQualification" required placeholder="e.g. BSc. Computer Science, Kenyatta University" />
+            </div>
+
+            <div class="form-group">
+              <label>Key Skills (comma separated)</label>
+              <input type="text" id="mSkills" placeholder="e.g. Python, Accounting, Agribusiness, Public Speaking" />
+            </div>
+
+            <div class="form-group">
+              <label>Bio & What Mentorship Support You Need *</label>
+              <textarea id="mBio" required placeholder="Briefly describe your journey, career goals, and what kind of mentor guidance you are looking for..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Optional CV / Certificate Upload (PDF or Image, max 500KB)</label>
+              <input type="file" id="mDocFile" accept=".pdf,.png,.jpg,.jpeg" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save & Publish Profile</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- TAB C: ADMIN PANEL & INVITE LINK GENERATOR -->
+      <div id="viewAdmin" class="hidden">
+        <div class="card">
+          <div class="card-title">Generate Invite Link</div>
+          <div class="card-sub">Create a shareable link for new Mentors or Mentees.</div>
+
+          <div class="filter-grid">
+            <div class="form-group">
+              <label>Invite Role</label>
+              <select id="newInviteRole">
+                <option value="MENTEE">Mentee Invite</option>
+                <option value="MENTOR">Mentor Invite</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Label / Recipient Name</label>
+              <input type="text" id="newInviteLabel" placeholder="e.g. Cohort 1 / Dr. Mwangi" />
+            </div>
+          </div>
+
+          <button class="btn btn-accent" onclick="createInviteLink()">+ Generate Invite Link</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Active Invite Links</div>
+          <div class="card-sub">Tap Share on WhatsApp or Copy Link to invite users.</div>
+          <div id="inviteListContainer"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Database & Sync Status</div>
+          <div class="card-sub">Currently running in Local Mobile Storage mode.</div>
+          <button class="btn btn-outline btn-sm" onclick="resetDemoData()">Restore Sample Profiles</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // ==========================================
+    // 1. HARDCODED ADMIN & INITIAL STATE
+    // ==========================================
+    const ADMIN_CREDS = {
+      username: "admin",
+      password: "Ufunguo321"
+    };
+
+    const STORAGE_KEYS = {
+      MENTEES: "mln_mentees_v1",
+      INVITES: "mln_invites_v1",
+      SESSION: "mln_session_v1"
+    };
+
+    const DEFAULT_INVITES = [
+      { code: "MLN-MENTOR-2026", role: "MENTOR", label: "General Mentor Pass", active: true },
+      { code: "MLN-MENTEE-2026", role: "MENTEE", label: "General Mentee Pass", active: true }
+    ];
+
+    const DEFAULT_MENTEES = [
+      {
+        id: "m_101",
+        name: "Brian Kamau Njoroge",
+        phone: "254712345678",
+        email: "brian.njoroge@example.com",
+        location: "Ol Kalou, Nyandarua",
+        age: "23 - 27",
+        field: "Technology & Software",
+        education: "Undergraduate Degree",
+        qualification: "BSc. Information Technology - JKUAT",
+        skills: ["Web Development", "Python", "POS Systems", "Digital Marketing"],
+        bio: "Aspiring software engineer building practical tools for local SMEs. Seeking guidance on scaling SaaS products and enterprise client acquisition.",
+        docName: "Brian_Kamau_CV.pdf",
+        docData: ""
+      },
+      {
+        id: "m_102",
+        name: "Faith Muthoni Waweru",
+        phone: "254722987654",
+        email: "faith.waweru@example.com",
+        location: "Nairobi",
+        age: "23 - 27",
+        field: "Finance & Accounting",
+        education: "Undergraduate Degree",
+        qualification: "BCom (Finance) & CPA Part II - University of Nairobi",
+        skills: ["Financial Modeling", "Tax Compliance", "Auditing", "Excel"],
+        bio: "Passionate about corporate finance and SME bookkeeping. Looking for a senior finance mentor to guide my CPA transition and career growth.",
+        docName: "",
+        docData: ""
+      },
+      {
+        id: "m_103",
+        name: "David Kiprop Chesire",
+        phone: "254733456123",
+        email: "david.chesire@example.com",
+        location: "Nakuru",
+        age: "18 - 22",
+        field: "Agriculture & Agribusiness",
+        education: "Diploma",
+        qualification: "Diploma in Agribusiness Management - Egerton University",
+        skills: ["Dairy Value Chain", "Horticulture", "Supply Chain"],
+        bio: "Running a small potato and dairy aggregation initiative in Rift Valley. Seeking mentorship on agribusiness financing and export standards.",
+        docName: "",
+        docData: ""
+      }
+    ];
+
+    // ==========================================
+    // 2. DATA INITIALIZATION
+    // ==========================================
+    function initStorage() {
+      if (!localStorage.getItem(STORAGE_KEYS.INVITES)) {
+        localStorage.setItem(STORAGE_KEYS.INVITES, JSON.stringify(DEFAULT_INVITES));
+      }
+      if (!localStorage.getItem(STORAGE_KEYS.MENTEES)) {
+        localStorage.setItem(STORAGE_KEYS.MENTEES, JSON.stringify(DEFAULT_MENTEES));
+      }
+    }
+
+    function getInvites() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEYS.INVITES) || "[]");
+    }
+
+    function saveInvites(list) {
+      localStorage.setItem(STORAGE_KEYS.INVITES, JSON.stringify(list));
+    }
+
+    function getMentees() {
+      return JSON.parse(localStorage.getItem(STORAGE_KEYS.MENTEES) || "[]");
+    }
+
+    function saveMentees(list) {
+      localStorage.setItem(STORAGE_KEYS.MENTEES, JSON.stringify(list));
+    }
+
+    // ==========================================
+    // 3. INVITE LINK & ADMIN AUTHENTICATION
+    // ==========================================
+    function checkUrlInviteAndSession() {
+      initStorage();
+      const params = new URLSearchParams(window.location.search);
+      const urlInvite = params.get("invite");
+
+      if (urlInvite) {
+        const cleanCode = urlInvite.trim().toUpperCase();
+        const found = getInvites().find(i => i.code.toUpperCase() === cleanCode && i.active);
+        if (found) {
+          setSession({ role: found.role, code: found.code, label: found.label });
+          // Clean URL without reloading
+          window.history.replaceState({}, document.title, window.location.pathname);
+        } else {
+          showGateError("This invite link is invalid or has been revoked. Please contact Admin.");
+        }
+      }
+
+      const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || "null");
+      if (session) {
+        unlockApp(session);
+      }
+    }
+
+    function verifyInviteCode() {
+      const input = document.getElementById("inviteCodeInput").value.trim().toUpperCase();
+      if (!input) {
+        showGateError("Please enter an invite code.");
+        return;
+      }
+      const found = getInvites().find(i => i.code.toUpperCase() === input && i.active);
+      if (!found) {
+        showGateError("Invalid or expired invite code.");
+        return;
+      }
+      setSession({ role: found.role, code: found.code, label: found.label });
+      unlockApp({ role: found.role, code: found.code, label: found.label });
+    }
+
+    function loginAdmin() {
+      const user = document.getElementById("adminUser").value.trim();
+      const pass = document.getElementById("adminPass").value;
+
+      if (user === ADMIN_CREDS.username && pass === ADMIN_CREDS.password) {
+        const session = { role: "ADMIN", label: "Administrator" };
+        setSession(session);
+        unlockApp(session);
+      } else {
+        showGateError("Incorrect administrator username or password.");
+      }
+    }
+
+    function setSession(sessionObj) {
+      localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(sessionObj));
+    }
+
+    function logoutSession() {
+      localStorage.removeItem(STORAGE_KEYS.SESSION);
+      document.getElementById("appView").classList.add("hidden");
+      document.getElementById("gateView").classList.remove("hidden");
+      document.getElementById("sessionBadge").textContent = "Invite Only";
+    }
+
+    function showGateError(msg) {
+      const box = document.getElementById("gateAlert");
+      box.textContent = msg;
+      box.classList.remove("hidden");
+    }
+
+    function unlockApp(session) {
+      document.getElementById("gateAlert").classList.add("hidden");
+      document.getElementById("gateView").classList.add("hidden");
+      document.getElementById("appView").classList.remove("hidden");
+      document.getElementById("sessionBadge").textContent = session.role;
+
+      const tabAdmin = document.getElementById("tabAdmin");
+      if (session.role === "ADMIN") {
+        tabAdmin.classList.remove("hidden");
+        renderInvites();
+      } else {
+        tabAdmin.classList.add("hidden");
+      }
+
+      // Default tab routing by role
+      if (session.role === "MENTEE") {
+        switchTab("profile");
+      } else {
+        switchTab("directory");
+      }
+      renderMentees();
+    }
+
+    function switchTab(tabName) {
+      ["viewDirectory", "viewProfile", "viewAdmin"].forEach(id => {
+        document.getElementById(id).classList.add("hidden");
+      });
+      ["tabDirectory", "tabProfile", "tabAdmin"].forEach(id => {
+        document.getElementById(id).classList.remove("active");
+      });
+
+      if (tabName === "directory") {
+        document.getElementById("viewDirectory").classList.remove("hidden");
+        document.getElementById("tabDirectory").classList.add("active");
+        renderMentees();
+      } else if (tabName === "profile") {
+        document.getElementById("viewProfile").classList.remove("hidden");
+        document.getElementById("tabProfile").classList.add("active");
+      } else if (tabName === "admin") {
+        document.getElementById("viewAdmin").classList.remove("hidden");
+        document.getElementById("tabAdmin").classList.add("active");
+        renderInvites();
+      }
+    }
+
+    // ==========================================
+    // 4. MENTEE PROFILE CREATION & UPLOAD
+    // ==========================================
+    function formatKenyanPhone(raw) {
+      let digits = raw.replace(/\D/g, "");
+      if (digits.startsWith("0") && digits.length === 10) {
+        return "254" + digits.substring(1);
+      }
+      if (digits.startsWith("7") || digits.startsWith("1")) {
+        return "254" + digits;
+      }
+      return digits;
+    }
+
+    function saveMenteeProfile(e) {
+      e.preventDefault();
+      const fileInput = document.getElementById("mDocFile");
+      const file = fileInput.files[0];
+
+      if (file && file.size > 550 * 1024) {
+        alert("Please upload a smaller document (under 500KB) so it loads fast on mobile.");
+        return;
+      }
+
+      const processSave = (docName, docData) => {
+        const newMentee = {
+          id: "m_" + Date.now(),
+          name: document.getElementById("mName").value.trim(),
+          phone: formatKenyanPhone(document.getElementById("mPhone").value.trim()),
+          email: document.getElementById("mEmail").value.trim(),
+          location: document.getElementById("mLocation").value.trim(),
+          age: document.getElementById("mAge").value,
+          field: document.getElementById("mField").value,
+          education: document.getElementById("mEducation").value,
+          qualification: document.getElementById("mQualification").value.trim(),
+          skills: document.getElementById("mSkills").value
+            .split(",")
+            .map(s => s.trim())
+            .filter(Boolean),
+          bio: document.getElementById("mBio").value.trim(),
+          docName: docName || "",
+          docData: docData || ""
+        };
+
+        const list = getMentees();
+        list.unshift(newMentee);
+        saveMentees(list);
+
+        const alertBox = document.getElementById("profileAlert");
+        alertBox.textContent = "Profile saved! Mentors can now view your profile and reach out.";
+        alertBox.classList.remove("hidden");
+        document.getElementById("menteeForm").reset();
+
+        setTimeout(() => {
+          alertBox.classList.add("hidden");
+          switchTab("directory");
+        }, 1400);
+      };
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          processSave(file.name, evt.target.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        processSave("", "");
+      }
+    }
+
+    // ==========================================
+    // 5. MENTOR DIRECTORY & DIRECT OUTREACH
+    // ==========================================
+    function renderMentees() {
+      const search = document.getElementById("filterSearch").value.toLowerCase();
+      const field = document.getElementById("filterField").value;
+      const edu = document.getElementById("filterEducation").value;
+      const loc = document.getElementById("filterLocation").value.toLowerCase();
+      const session = JSON.parse(localStorage.getItem(STORAGE_KEYS.SESSION) || "{}");
+
+      const mentees = getMentees().filter(m => {
+        const matchSearch =
+          !search ||
+          m.name.toLowerCase().includes(search) ||
+          m.bio.toLowerCase().includes(search) ||
+          m.qualification.toLowerCase().includes(search) ||
+          m.skills.some(s => s.toLowerCase().includes(search));
+
+        const matchField = !field || m.field === field;
+        const matchEdu = !edu || m.education === edu;
+        const matchLoc = !loc || m.location.toLowerCase().includes(loc);
+
+        return matchSearch && matchField && matchEdu && matchLoc;
+      });
+
+      document.getElementById("menteeCountLabel").textContent =
+        `Showing ${mentees.length} Mentee${mentees.length === 1 ? "" : "s"}`;
+
+      const container = document.getElementById("menteeListContainer");
+      if (mentees.length === 0) {
+        container.innerHTML = `<div class="card"><div class="card-sub" style="margin:0;">No mentees match your current filters.</div></div>`;
+        return;
+      }
+
+      container.innerHTML = mentees.map(m => {
+        const waMsg = encodeURIComponent(
+          `Hello ${m.name}, I found your profile on the Mugathi Legacy Network and would like to connect for mentorship.`
+        );
+        const mailSubj = encodeURIComponent("Mentorship Connection - Mugathi Legacy Network");
+
+        const skillsHtml = (m.skills || [])
+          .map(s => `<span class="skill-pill">${escapeHtml(s)}</span>`)
+          .join("");
+
+        const docHtml = m.docName
+          ? `<div style="margin-bottom:10px; font-size:0.8rem;">
+              <strong>Attachment:</strong> ${
+                m.docData
+                  ? `<a href="${m.docData}" download="${escapeHtml(m.docName)}" style="color:var(--blue-accent); font-weight:600;">Download ${escapeHtml(m.docName)}</a>`
+                  : `<span style="color:var(--slate-muted);">${escapeHtml(m.docName)}</span>`
+              }
+             </div>`
+          : "";
+
+        const adminDeleteBtn =
+          session.role === "ADMIN"
+            ? `<button class="btn btn-danger btn-sm" style="margin-top:10px; width:100%;" onclick="deleteMentee('${m.id}')">Remove Profile (Admin)</button>`
+            : "";
+
+        return `
+          <div class="card mentee-card">
+            <div class="mentee-header">
+              <div>
+                <div class="mentee-name">${escapeHtml(m.name)}</div>
+                <div class="mentee-meta">${escapeHtml(m.location)} • ${escapeHtml(m.education)} (${escapeHtml(m.age)})</div>
+              </div>
+              <span class="mentee-tag">${escapeHtml(m.field)}</span>
+            </div>
+
+            <div style="font-size:0.84rem; font-weight:600; color:var(--navy-main); margin-bottom:6px;">
+              ${escapeHtml(m.qualification)}
+            </div>
+
+            <div class="mentee-bio">${escapeHtml(m.bio)}</div>
+
+            <div class="skills-wrap">${skillsHtml}</div>
+            ${docHtml}
+
+            <div class="contact-grid">
+              <a class="contact-btn btn-wa" href="https://wa.me/${m.phone}?text=${waMsg}" target="_blank" rel="noopener">WhatsApp</a>
+              <a class="contact-btn btn-call" href="tel:+${m.phone}">Call</a>
+              <a class="contact-btn btn-mail" href="mailto:${escapeHtml(m.email)}?subject=${mailSubj}">Email</a>
+            </div>
+            ${adminDeleteBtn}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function deleteMentee(id) {
+      if (!confirm("Remove this mentee profile?")) return;
+      const updated = getMentees().filter(m => m.id !== id);
+      saveMentees(updated);
+      renderMentees();
+    }
+
+    // ==========================================
+    // 6. ADMIN INVITE GENERATOR
+    // ==========================================
+    function createInviteLink() {
+      const role = document.getElementById("newInviteRole").value;
+      const label = document.getElementById("newInviteLabel").value.trim() || "Invited Member";
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      const code = `MLN-${role}-${randomNum}`;
+
+      const list = getInvites();
+      list.unshift({ code, role, label, active: true });
+      saveInvites(list);
+
+      document.getElementById("newInviteLabel").value = "";
+      renderInvites();
+    }
+
+    function renderInvites() {
+      const list = getInvites();
+      const baseUrl = window.location.origin + window.location.pathname;
+      const container = document.getElementById("inviteListContainer");
+
+      container.innerHTML = list.map((inv, idx) => {
+        const fullLink = `${baseUrl}?invite=${inv.code}`;
+        const shareText = encodeURIComponent(
+          `You are invited to join the *Mugathi Legacy Network* as a ${inv.role}.\nTap here to access: ${fullLink}`
+        );
+
+        return `
+          <div class="invite-item">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong>${escapeHtml(inv.label)} (${inv.role})</strong>
+              <span class="mentee-tag">${inv.code}</span>
+            </div>
+            <div class="invite-url">${fullLink}</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button class="btn btn-outline btn-sm" onclick="copyText('${fullLink}')">Copy Link</button>
+              <a class="btn btn-accent btn-sm" href="https://wa.me/?text=${shareText}" target="_blank" rel="noopener">Share WhatsApp</a>
+              <button class="btn btn-danger btn-sm" onclick="revokeInvite(${idx})">Revoke</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function revokeInvite(index) {
+      const list = getInvites();
+      list.splice(index, 1);
+      saveInvites(list);
+      renderInvites();
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Invite link copied to clipboard!");
+      });
+    }
+
+    function resetDemoData() {
+      localStorage.setItem(STORAGE_KEYS.MENTEES, JSON.stringify(DEFAULT_MENTEES));
+      localStorage.setItem(STORAGE_KEYS.INVITES, JSON.stringify(DEFAULT_INVITES));
+      renderMentees();
+      renderInvites();
+      alert("Sample profiles and default invite codes restored.");
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    // Boot app
+    checkUrlInviteAndSession();
+  </script>
+</body>
+</html>
