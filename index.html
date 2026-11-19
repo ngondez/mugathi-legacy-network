@@ -356,7 +356,7 @@
   <header>
     <div class="brand">
       <h1>MUGATHI LEGACY NETWORK</h1>
-      <span>Mentorship & Legacy Portal • Cloud Sync</span>
+      <span>Mentorship & Legacy Portal</span>
     </div>
     <div id="sessionBadge" class="role-badge">Invite Only</div>
   </header>
@@ -375,7 +375,7 @@
           <label for="inviteCodeInput">Have an Invite Code?</label>
           <input type="text" id="inviteCodeInput" placeholder="e.g. MLN-MENTEE-2026" />
         </div>
-        <button class="btn btn-accent" onclick="verifyInviteCode()">Enter with Invite Code</button>
+        <button type="button" class="btn btn-accent" onclick="verifyInviteCode()">Enter with Invite Code</button>
       </div>
 
       <div class="card">
@@ -389,17 +389,17 @@
           <label for="adminPass">Password</label>
           <input type="password" id="adminPass" placeholder="Enter password" autocomplete="current-password" />
         </div>
-        <button class="btn btn-primary" onclick="loginAdmin()">Sign In as Admin</button>
+        <button type="button" class="btn btn-primary" onclick="loginAdmin()">Sign In as Admin</button>
       </div>
     </section>
 
     <!-- 2. MAIN APP SHELL (UNLOCKED) -->
     <section id="appView" class="hidden">
       <div class="nav-bar" id="navTabs">
-        <button class="nav-tab active" id="tabDirectory" onclick="switchTab('directory')">Mentor Directory</button>
-        <button class="nav-tab" id="tabProfile" onclick="switchTab('profile')">Mentee Profile</button>
-        <button class="nav-tab hidden" id="tabAdmin" onclick="switchTab('admin')">Admin & Invites</button>
-        <button class="nav-tab" onclick="logoutSession()">Exit</button>
+        <button type="button" class="nav-tab active" id="tabDirectory" onclick="switchTab('directory')">Mentor Directory</button>
+        <button type="button" class="nav-tab" id="tabProfile" onclick="switchTab('profile')">Mentee Profile</button>
+        <button type="button" class="nav-tab hidden" id="tabAdmin" onclick="switchTab('admin')">Admin & Invites</button>
+        <button type="button" class="nav-tab" onclick="logoutSession()">Exit</button>
       </div>
 
       <!-- TAB A: MENTOR DIRECTORY & FILTERS -->
@@ -422,8 +422,6 @@
               <option value="Finance & Accounting">Finance & Accounting</option>
               <option value="Agriculture & Agribusiness">Agriculture & Agribusiness</option>
               <option value="Law & Governance">Law & Governance</option>
-              <option value="Education">Education</option>
-              <option value="Social & Community">Social & Community Development</option>
               <option value="Other">Other</option>
             </select>
 
@@ -442,7 +440,7 @@
           </div>
         </div>
 
-        <div id="menteeCountLabel" style="font-size:0.82rem; color:var(--slate-muted); margin-bottom:10px; font-weight:600;">Syncing with cloud...</div>
+        <div id="menteeCountLabel" style="font-size:0.82rem; color:var(--slate-muted); margin-bottom:10px; font-weight:600;">Loading profiles...</div>
         <div id="menteeListContainer"></div>
       </div>
 
@@ -498,8 +496,6 @@
                   <option value="Finance & Accounting">Finance & Accounting</option>
                   <option value="Agriculture & Agribusiness">Agriculture & Agribusiness</option>
                   <option value="Law & Governance">Law & Governance</option>
-                  <option value="Education">Education</option>
-                  <option value="Social & Community">Social & Community Development</option>
                   <option value="Other">Other</option>
                 </select>
               </div>
@@ -527,4 +523,605 @@
 
             <div class="form-group">
               <label>Bio & What Mentorship Support You Need *</label>
-              <textarea id="mBio" required placeholder="Briefly describe your journey
+              <textarea id="mBio" required placeholder="Briefly describe your journey, career goals, and what kind of mentor guidance you are looking for..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Optional CV / Certificate Upload (PDF or Image, max 450KB)</label>
+              <input type="file" id="mDocFile" accept=".pdf,.png,.jpg,.jpeg" />
+            </div>
+
+            <button type="submit" id="saveProfileBtn" class="btn btn-primary">Save & Publish Profile</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- TAB C: ADMIN PANEL & INVITE LINK GENERATOR -->
+      <div id="viewAdmin" class="hidden">
+        <div class="card">
+          <div class="card-title">Generate Invite Link</div>
+          <div class="card-sub">Create a shareable link for new Mentors or Mentees.</div>
+
+          <div class="filter-grid">
+            <div class="form-group">
+              <label>Invite Role</label>
+              <select id="newInviteRole">
+                <option value="MENTEE">Mentee Invite</option>
+                <option value="MENTOR">Mentor Invite</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Label / Recipient Name</label>
+              <input type="text" id="newInviteLabel" placeholder="e.g. Cohort 1 / Dr. Mwangi" />
+            </div>
+          </div>
+
+          <button type="button" class="btn btn-accent" onclick="createInviteLink()">+ Generate Invite Link</button>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Active Invite Links</div>
+          <div class="card-sub">Tap Share on WhatsApp or Copy Link to invite users.</div>
+          <div id="inviteListContainer"></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- CORE UI & AUTH SCRIPT (ALWAYS AVAILABLE) -->
+  <script>
+    const ADMIN_CREDS = {
+      username: "admin",
+      password: "Ufunguo321"
+    };
+
+    const SESSION_KEY = "mln_session_v1";
+    const LOCAL_INVITES_KEY = "mln_invites_cache_v1";
+    const LOCAL_MENTEES_KEY = "mln_mentees_cache_v1";
+
+    const DEFAULT_INVITES = [
+      { code: "MLN-MENTOR-2026", role: "MENTOR", label: "General Mentor Pass", active: true, createdAt: 1 },
+      { code: "MLN-MENTEE-2026", role: "MENTEE", label: "General Mentee Pass", active: true, createdAt: 2 }
+    ];
+
+    const DEFAULT_MENTEES = [
+      {
+        id: "m_101",
+        name: "Brian Kamau Njoroge",
+        phone: "254712345678",
+        email: "brian.njoroge@example.com",
+        location: "Ol Kalou, Nyandarua",
+        age: "23 - 27",
+        field: "Technology & Software",
+        education: "Undergraduate Degree",
+        qualification: "BSc. Information Technology - JKUAT",
+        skills: ["Web Development", "Python", "POS Systems", "Digital Marketing"],
+        bio: "Aspiring software engineer building practical tools for local SMEs. Seeking guidance on scaling SaaS products and enterprise client acquisition.",
+        docName: "",
+        docData: "",
+        createdAt: 101
+      },
+      {
+        id: "m_102",
+        name: "Faith Muthoni Waweru",
+        phone: "254722987654",
+        email: "faith.waweru@example.com",
+        location: "Nairobi",
+        age: "23 - 27",
+        field: "Finance & Accounting",
+        education: "Undergraduate Degree",
+        qualification: "BCom (Finance) & CPA Part II - University of Nairobi",
+        skills: ["Financial Modeling", "Tax Compliance", "Auditing", "Excel"],
+        bio: "Passionate about corporate finance and SME bookkeeping. Looking for a senior finance mentor to guide my CPA transition and career growth.",
+        docName: "",
+        docData: "",
+        createdAt: 102
+      },
+      {
+        id: "m_103",
+        name: "David Kiprop Chesire",
+        phone: "254733456123",
+        email: "david.chesire@example.com",
+        location: "Nakuru",
+        age: "18 - 22",
+        field: "Agriculture & Agribusiness",
+        education: "Diploma",
+        qualification: "Diploma in Agribusiness Management - Egerton University",
+        skills: ["Dairy Value Chain", "Horticulture", "Supply Chain"],
+        bio: "Running a small potato and dairy aggregation initiative in Rift Valley. Seeking mentorship on agribusiness financing and export standards.",
+        docName: "",
+        docData: "",
+        createdAt: 103
+      }
+    ];
+
+    function getCachedInvites() {
+      const saved = JSON.parse(localStorage.getItem(LOCAL_INVITES_KEY) || "null");
+      if (saved && Array.isArray(saved) && saved.length > 0) return saved;
+      return DEFAULT_INVITES;
+    }
+
+    function setCachedInvites(list) {
+      localStorage.setItem(LOCAL_INVITES_KEY, JSON.stringify(list));
+    }
+
+    function getCachedMentees() {
+      const saved = JSON.parse(localStorage.getItem(LOCAL_MENTEES_KEY) || "null");
+      if (saved && Array.isArray(saved) && saved.length > 0) return saved;
+      return DEFAULT_MENTEES;
+    }
+
+    function setCachedMentees(list) {
+      localStorage.setItem(LOCAL_MENTEES_KEY, JSON.stringify(list));
+    }
+
+    function inferRoleFromCode(code) {
+      const upper = (code || "").toUpperCase();
+      if (upper.includes("MENTOR")) return "MENTOR";
+      if (upper.includes("MENTEE")) return "MENTEE";
+      return null;
+    }
+
+    function resolveInvite(code) {
+      const clean = (code || "").trim().toUpperCase();
+      if (!clean) return null;
+      const found = getCachedInvites().find(i => i.code.toUpperCase() === clean && i.active !== false);
+      if (found) return found;
+
+      // Allow MLN-MENTOR-... or MLN-MENTEE-... codes even if opened on another device before cache sync
+      const inferredRole = inferRoleFromCode(clean);
+      if (clean.startsWith("MLN-") && inferredRole) {
+        return { code: clean, role: inferredRole, label: "Invited " + inferredRole, active: true };
+      }
+      return null;
+    }
+
+    function showGateError(msg) {
+      const box = document.getElementById("gateAlert");
+      box.textContent = msg;
+      box.classList.remove("hidden");
+    }
+
+    function setSession(sessionObj) {
+      localStorage.setItem(SESSION_KEY, JSON.stringify(sessionObj));
+    }
+
+    function loginAdmin() {
+      const user = document.getElementById("adminUser").value.trim();
+      const pass = document.getElementById("adminPass").value;
+
+      if (user === ADMIN_CREDS.username && pass === ADMIN_CREDS.password) {
+        const session = { role: "ADMIN", label: "Administrator" };
+        setSession(session);
+        unlockApp(session);
+      } else {
+        showGateError("Incorrect username or password. Use admin / Ufunguo321.");
+      }
+    }
+
+    function verifyInviteCode() {
+      const input = document.getElementById("inviteCodeInput").value.trim().toUpperCase();
+      const found = resolveInvite(input);
+      if (!found) {
+        showGateError("Invalid invite code. Check the code or sign in as Admin.");
+        return;
+      }
+      const session = { role: found.role, code: found.code, label: found.label };
+      setSession(session);
+      unlockApp(session);
+    }
+
+    function logoutSession() {
+      localStorage.removeItem(SESSION_KEY);
+      document.getElementById("appView").classList.add("hidden");
+      document.getElementById("gateView").classList.remove("hidden");
+      document.getElementById("sessionBadge").textContent = "Invite Only";
+    }
+
+    function unlockApp(session) {
+      document.getElementById("gateAlert").classList.add("hidden");
+      document.getElementById("gateView").classList.add("hidden");
+      document.getElementById("appView").classList.remove("hidden");
+      document.getElementById("sessionBadge").textContent = session.role;
+
+      const tabAdmin = document.getElementById("tabAdmin");
+      if (session.role === "ADMIN") {
+        tabAdmin.classList.remove("hidden");
+        renderInvites();
+      } else {
+        tabAdmin.classList.add("hidden");
+      }
+
+      if (session.role === "MENTEE") {
+        switchTab("profile");
+      } else {
+        switchTab("directory");
+      }
+      renderMentees();
+    }
+
+    function switchTab(tabName) {
+      ["viewDirectory", "viewProfile", "viewAdmin"].forEach(id => {
+        document.getElementById(id).classList.add("hidden");
+      });
+      ["tabDirectory", "tabProfile", "tabAdmin"].forEach(id => {
+        document.getElementById(id).classList.remove("active");
+      });
+
+      if (tabName === "directory") {
+        document.getElementById("viewDirectory").classList.remove("hidden");
+        document.getElementById("tabDirectory").classList.add("active");
+        renderMentees();
+      } else if (tabName === "profile") {
+        document.getElementById("viewProfile").classList.remove("hidden");
+        document.getElementById("tabProfile").classList.add("active");
+      } else if (tabName === "admin") {
+        document.getElementById("viewAdmin").classList.remove("hidden");
+        document.getElementById("tabAdmin").classList.add("active");
+        renderInvites();
+      }
+    }
+
+    function formatKenyanPhone(raw) {
+      let digits = raw.replace(/\D/g, "");
+      if (digits.startsWith("0") && digits.length === 10) {
+        return "254" + digits.substring(1);
+      }
+      if (digits.startsWith("7") || digits.startsWith("1")) {
+        return "254" + digits;
+      }
+      return digits;
+    }
+
+    function renderMentees() {
+      const search = (document.getElementById("filterSearch")?.value || "").toLowerCase();
+      const field = document.getElementById("filterField")?.value || "";
+      const edu = document.getElementById("filterEducation")?.value || "";
+      const loc = (document.getElementById("filterLocation")?.value || "").toLowerCase();
+      const session = JSON.parse(localStorage.getItem(SESSION_KEY) || "{}");
+
+      const mentees = getCachedMentees().filter(m => {
+        const matchSearch =
+          !search ||
+          (m.name || "").toLowerCase().includes(search) ||
+          (m.bio || "").toLowerCase().includes(search) ||
+          (m.qualification || "").toLowerCase().includes(search) ||
+          (m.skills || []).some(s => s.toLowerCase().includes(search));
+
+        const matchField = !field || m.field === field;
+        const matchEdu = !edu || m.education === edu;
+        const matchLoc = !loc || (m.location || "").toLowerCase().includes(loc);
+
+        return matchSearch && matchField && matchEdu && matchLoc;
+      });
+
+      const countEl = document.getElementById("menteeCountLabel");
+      if (countEl) {
+        countEl.textContent = `Showing ${mentees.length} Mentee${mentees.length === 1 ? "" : "s"}`;
+      }
+
+      const container = document.getElementById("menteeListContainer");
+      if (!container) return;
+
+      if (mentees.length === 0) {
+        container.innerHTML = `<div class="card"><div class="card-sub" style="margin:0;">No mentees match your current filters.</div></div>`;
+        return;
+      }
+
+      container.innerHTML = mentees.map(m => {
+        const waMsg = encodeURIComponent(
+          `Hello ${m.name}, I found your profile on the Mugathi Legacy Network and would like to connect for mentorship.`
+        );
+        const mailSubj = encodeURIComponent("Mentorship Connection - Mugathi Legacy Network");
+
+        const skillsHtml = (m.skills || [])
+          .map(s => `<span class="skill-pill">${escapeHtml(s)}</span>`)
+          .join("");
+
+        const docHtml = m.docName
+          ? `<div style="margin-bottom:10px; font-size:0.8rem;">
+              <strong>Attachment:</strong> ${
+                m.docData
+                  ? `<a href="${m.docData}" download="${escapeHtml(m.docName)}" style="color:var(--blue-accent); font-weight:600;">Download ${escapeHtml(m.docName)}</a>`
+                  : `<span style="color:var(--slate-muted);">${escapeHtml(m.docName)}</span>`
+              }
+             </div>`
+          : "";
+
+        const adminDeleteBtn =
+          session.role === "ADMIN"
+            ? `<button type="button" class="btn btn-danger btn-sm" style="margin-top:10px; width:100%;" onclick="deleteMentee('${m.id}')">Remove Profile (Admin)</button>`
+            : "";
+
+        return `
+          <div class="card mentee-card">
+            <div class="mentee-header">
+              <div>
+                <div class="mentee-name">${escapeHtml(m.name)}</div>
+                <div class="mentee-meta">${escapeHtml(m.location)} • ${escapeHtml(m.education)} (${escapeHtml(m.age)})</div>
+              </div>
+              <span class="mentee-tag">${escapeHtml(m.field)}</span>
+            </div>
+
+            <div style="font-size:0.84rem; font-weight:600; color:var(--navy-main); margin-bottom:6px;">
+              ${escapeHtml(m.qualification)}
+            </div>
+
+            <div class="mentee-bio">${escapeHtml(m.bio)}</div>
+
+            <div class="skills-wrap">${skillsHtml}</div>
+            ${docHtml}
+
+            <div class="contact-grid">
+              <a class="contact-btn btn-wa" href="https://wa.me/${m.phone}?text=${waMsg}" target="_blank" rel="noopener">WhatsApp</a>
+              <a class="contact-btn btn-call" href="tel:+${m.phone}">Call</a>
+              <a class="contact-btn btn-mail" href="mailto:${escapeHtml(m.email)}?subject=${mailSubj}">Email</a>
+            </div>
+            ${adminDeleteBtn}
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderInvites() {
+      const baseUrl = window.location.origin + window.location.pathname;
+      const container = document.getElementById("inviteListContainer");
+      if (!container) return;
+
+      const activeList = getCachedInvites().filter(i => i.active !== false);
+      container.innerHTML = activeList.map(inv => {
+        const fullLink = `${baseUrl}?invite=${inv.code}`;
+        const shareText = encodeURIComponent(
+          `You are invited to join the *Mugathi Legacy Network* as a ${inv.role}.\nTap here to access: ${fullLink}`
+        );
+
+        return `
+          <div class="invite-item">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <strong>${escapeHtml(inv.label)} (${inv.role})</strong>
+              <span class="mentee-tag">${inv.code}</span>
+            </div>
+            <div class="invite-url">${fullLink}</div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button type="button" class="btn btn-outline btn-sm" onclick="copyText('${fullLink}')">Copy Link</button>
+              <a class="btn btn-accent btn-sm" href="https://wa.me/?text=${shareText}" target="_blank" rel="noopener">Share WhatsApp</a>
+              <button type="button" class="btn btn-danger btn-sm" onclick="revokeInvite('${inv.code}')">Revoke</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert("Invite link copied to clipboard!");
+      });
+    }
+
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    // Check URL invite or active session immediately on load
+    (function bootImmediately() {
+      const params = new URLSearchParams(window.location.search);
+      const urlInvite = params.get("invite");
+
+      if (urlInvite) {
+        const found = resolveInvite(urlInvite);
+        if (found) {
+          const session = { role: found.role, code: found.code, label: found.label };
+          setSession(session);
+          window.history.replaceState({}, document.title, window.location.pathname);
+          unlockApp(session);
+          return;
+        } else {
+          showGateError("Invalid invite code in URL.");
+        }
+      }
+
+      const savedSession = JSON.parse(localStorage.getItem(SESSION_KEY) || "null");
+      if (savedSession && savedSession.role) {
+        unlockApp(savedSession);
+      }
+    })();
+  </script>
+
+  <!-- OPTIONAL FIREBASE CLOUD SYNC (NON-BLOCKING) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      doc,
+      setDoc,
+      deleteDoc,
+      getDocs,
+      onSnapshot
+    } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC8Fj44m8JuADO6WDMhFt0LgiLevfeE7_w",
+      authDomain: "mugathi-legacy-network.firebaseapp.com",
+      projectId: "mugathi-legacy-network",
+      storageBucket: "mugathi-legacy-network.firebasestorage.app",
+      messagingSenderId: "106241700878",
+      appId: "1:106241700878:web:9b5ea1abf66b791498785f",
+      measurementId: "G-5BFF1N2QW7"
+    };
+
+    let db = null;
+
+    async function initCloudSync() {
+      try {
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+
+        const inviteSnap = await getDocs(collection(db, "mln_invites"));
+        if (inviteSnap.empty) {
+          for (const inv of DEFAULT_INVITES) {
+            await setDoc(doc(db, "mln_invites", inv.code), inv);
+          }
+        }
+
+        const menteeSnap = await getDocs(collection(db, "mln_mentees"));
+        if (menteeSnap.empty) {
+          for (const m of DEFAULT_MENTEES) {
+            await setDoc(doc(db, "mln_mentees", m.id), m);
+          }
+        }
+
+        onSnapshot(collection(db, "mln_mentees"), (snapshot) => {
+          const cloudList = snapshot.docs
+            .map(d => d.data())
+            .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          if (cloudList.length > 0) {
+            setCachedMentees(cloudList);
+            renderMentees();
+          }
+        });
+
+        onSnapshot(collection(db, "mln_invites"), (snapshot) => {
+          const cloudInvites = snapshot.docs
+            .map(d => d.data())
+            .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          if (cloudInvites.length > 0) {
+            setCachedInvites(cloudInvites);
+            renderInvites();
+          }
+        });
+      } catch (err) {
+        console.warn("Firestore offline/unavailable, using local cache:", err);
+      }
+    }
+
+    window.saveMenteeProfile = async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById("saveProfileBtn");
+      const fileInput = document.getElementById("mDocFile");
+      const file = fileInput.files[0];
+
+      if (file && file.size > 450 * 1024) {
+        alert("Please upload a smaller document (under 450KB).");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.textContent = "Saving...";
+
+      const processSave = async (docName, docData) => {
+        const id = "m_" + Date.now();
+        const newMentee = {
+          id,
+          name: document.getElementById("mName").value.trim(),
+          phone: formatKenyanPhone(document.getElementById("mPhone").value.trim()),
+          email: document.getElementById("mEmail").value.trim(),
+          location: document.getElementById("mLocation").value.trim(),
+          age: document.getElementById("mAge").value,
+          field: document.getElementById("mField").value,
+          education: document.getElementById("mEducation").value,
+          qualification: document.getElementById("mQualification").value.trim(),
+          skills: document.getElementById("mSkills").value
+            .split(",")
+            .map(s => s.trim())
+            .filter(Boolean),
+          bio: document.getElementById("mBio").value.trim(),
+          docName: docName || "",
+          docData: docData || "",
+          createdAt: Date.now()
+        };
+
+        const updated = [newMentee, ...getCachedMentees()];
+        setCachedMentees(updated);
+        renderMentees();
+
+        if (db) {
+          try {
+            await setDoc(doc(db, "mln_mentees", id), newMentee);
+          } catch (err) {
+            console.warn("Cloud write queued locally:", err);
+          }
+        }
+
+        const alertBox = document.getElementById("profileAlert");
+        alertBox.textContent = "Profile saved! Mentors can now view your profile.";
+        alertBox.classList.remove("hidden");
+        document.getElementById("menteeForm").reset();
+        btn.disabled = false;
+        btn.textContent = "Save & Publish Profile";
+
+        setTimeout(() => {
+          alertBox.classList.add("hidden");
+          switchTab("directory");
+        }, 1200);
+      };
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          processSave(file.name, evt.target.result);
+        };
+        reader.readAsDataURL(file);
+      } else {
+        processSave("", "");
+      }
+    };
+
+    window.deleteMentee = async function(id) {
+      if (!confirm("Remove this mentee profile?")) return;
+      const updated = getCachedMentees().filter(m => m.id !== id);
+      setCachedMentees(updated);
+      renderMentees();
+      if (db) {
+        try {
+          await deleteDoc(doc(db, "mln_mentees", id));
+        } catch (err) {
+          console.warn(err);
+        }
+      }
+    };
+
+    window.createInviteLink = async function() {
+      const role = document.getElementById("newInviteRole").value;
+      const label = document.getElementById("newInviteLabel").value.trim() || "Invited Member";
+      const randomNum = Math.floor(1000 + Math.random() * 9000);
+      const code = `MLN-${role}-${randomNum}`;
+      const inviteObj = { code, role, label, active: true, createdAt: Date.now() };
+
+      const updated = [inviteObj, ...getCachedInvites()];
+      setCachedInvites(updated);
+      renderInvites();
+      document.getElementById("newInviteLabel").value = "";
+
+      if (db) {
+        try {
+          await setDoc(doc(db, "mln_invites", code), inviteObj);
+        } catch (err) {
+          console.warn(err);
+        }
+      }
+    };
+
+    window.revokeInvite = async function(code) {
+      const updated = getCachedInvites().filter(i => i.code !== code);
+      setCachedInvites(updated);
+      renderInvites();
+      if (db) {
+        try {
+          await deleteDoc(doc(db, "mln_invites", code));
+        } catch (err) {
+          console.warn(err);
+        }
+      }
+    };
+
+    initCloudSync();
+  </script>
+</body>
+</html>
